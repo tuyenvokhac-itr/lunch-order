@@ -1,7 +1,13 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
+import { UsersService } from '../users/users.service';
+import { CommonUtils } from 'src/libs/utils/common_utils';
+import { RegisterUserDto } from 'src/users/models/dtos/register_user.dto';
+import { UserResponse } from 'src/users/models/dtos/user_response';
 import { UserEntity } from 'src/users/models/entities/user.entity';
+import { v4 as uuid } from 'uuid';
+import { IResponse, NormalResponse } from 'src/bases/responses/responses';
+import { APP_MESSAGE_CODE } from 'src/libs/constants/app_constants';
 
 @Injectable()
 export class AuthService {
@@ -10,8 +16,22 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async register(user: UserEntity): Promise<UserEntity> {
-    return this.usersService.create(user);
+  async register(registerDto: RegisterUserDto): Promise<IResponse> {
+    const hasedPassword = await CommonUtils.hashPassword(registerDto.password);
+    const userId = uuid();
+    const newUserEntity = UserEntity.fromRegisterDto(
+      registerDto,
+      userId,
+      hasedPassword,
+    );
+
+    await this.usersService.create(newUserEntity);
+
+    return new NormalResponse(
+      201,
+      APP_MESSAGE_CODE.SSO_SUCCESS_201_001,
+      UserResponse.fromEntity(newUserEntity),
+    );
   }
 
   async signIn(

@@ -17,7 +17,9 @@ export class UsersController {
 
   @Post()
   register(@Body() registerDto: UserEntity) {
-    return this.userService.create(registerDto);
+    try {
+      return this.userService.create(registerDto);
+    } catch (error) {}
   }
 
   @UseGuards(AuthGuard)

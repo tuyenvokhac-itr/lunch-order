@@ -6,22 +6,25 @@ import {
   HttpStatus,
   Post,
   Request,
+  UseFilters,
   UseGuards,
 } from '@nestjs/common';
 
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 import { Public } from './constants';
-import { UserEntity } from 'src/users/models/entities/user.entity';
+import { RegisterUserDto } from 'src/users/models/dtos/register_user.dto';
+import { HttpExceptionFilter } from 'src/libs/exceptions/http-exception.filter';
 
+@UseFilters(new HttpExceptionFilter())
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Public()
   @Post('register')
-  register(@Body() signInDto: UserEntity) {
-    return this.authService.register(signInDto);
+  register(@Body() registerUserDto: RegisterUserDto) {
+    return this.authService.register(registerUserDto);
   }
 
   @HttpCode(HttpStatus.OK)
