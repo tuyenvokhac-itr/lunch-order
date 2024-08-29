@@ -15,8 +15,10 @@ import { AuthService } from './auth.service';
 import { Public } from './constants';
 import { RegisterUserDto } from 'src/users/models/dtos/register_user.dto';
 import { HttpExceptionFilter } from 'src/libs/exceptions/http-exception.filter';
+import { ApiTags } from '@nestjs/swagger';
 
-@UseFilters(new HttpExceptionFilter())
+@ApiTags('Auth')
+@UseFilters(HttpExceptionFilter)
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}

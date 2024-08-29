@@ -7,6 +7,7 @@ import { RegisterUserDto } from '../dtos/register_user.dto';
 @Entity(ENTITY_NAME.USER)
 export class UserEntity extends AbstractCreatedEntity {
   @Column({
+    name: 'user_id',
     type: 'char',
     unique: true,
     nullable: false,
@@ -15,6 +16,7 @@ export class UserEntity extends AbstractCreatedEntity {
   userId: string;
 
   @Column({
+    name: 'first_name',
     type: 'varchar',
     nullable: true,
     length: 50,
@@ -22,6 +24,7 @@ export class UserEntity extends AbstractCreatedEntity {
   firstName?: string;
 
   @Column({
+    name: 'last_name',
     type: 'varchar',
     nullable: true,
     length: 50,
@@ -37,11 +40,12 @@ export class UserEntity extends AbstractCreatedEntity {
   email: string;
 
   @Column({
+    name: 'hashed_password',
     type: 'varchar',
     length: 60,
     nullable: false,
   })
-  password: string;
+  hashedPassword: string;
 
   @Column({ type: 'enum', enum: Role, default: Role.USER })
   role: Role;
@@ -49,7 +53,7 @@ export class UserEntity extends AbstractCreatedEntity {
   @Column({ default: true })
   isActive: boolean;
 
-  @Column({ type: 'varchar', length: 50, nullable: true })
+  @Column({ name: 'avatar_path', type: 'varchar', length: 50, nullable: true })
   avatarPath?: string;
 
   static fromRegisterDto(
@@ -62,7 +66,7 @@ export class UserEntity extends AbstractCreatedEntity {
     entity.firstName = dto.firstName;
     entity.lastName = dto.lastName;
     entity.email = dto.email;
-    entity.password = hashedPassword;
+    entity.hashedPassword = hashedPassword;
     entity.role = dto.role;
     entity.isActive = true;
     return entity;

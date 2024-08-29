@@ -3,11 +3,11 @@ import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { CommonUtils } from 'src/libs/utils/common_utils';
 import { RegisterUserDto } from 'src/users/models/dtos/register_user.dto';
-import { UserResponse } from 'src/users/models/dtos/user_response';
 import { UserEntity } from 'src/users/models/entities/user.entity';
 import { v4 as uuid } from 'uuid';
 import { IResponse, NormalResponse } from 'src/bases/responses/responses';
 import { APP_MESSAGE_CODE } from 'src/libs/constants/app_constants';
+import { UserDto } from 'src/users/models/dtos/user.dto';
 
 @Injectable()
 export class AuthService {
@@ -30,7 +30,7 @@ export class AuthService {
     return new NormalResponse(
       201,
       APP_MESSAGE_CODE.SSO_SUCCESS_201_001,
-      UserResponse.fromEntity(newUserEntity),
+      UserDto.fromEntity(newUserEntity),
     );
   }
 
@@ -39,9 +39,9 @@ export class AuthService {
     password: string,
   ): Promise<{ access_token: string }> {
     const user = await this.usersService.findOneByEmail(email);
-    console.log(user.password);
+    console.log(user.hashedPassword);
 
-    if (user?.password !== password) {
+    if (user?.hashedPassword !== password) {
       throw new UnauthorizedException();
     }
     const payload = { sub: user.id, username: user.email };
